@@ -1,0 +1,142 @@
+DATA AUDIT GENIUS V3 - PRODUCTION DEPLOYABLE PACKAGE
+=====================================================
+
+CRITICAL ENVIRONMENT VARIABLES (Minimum Required):
+--------------------------------------------------
+1. JWT_SECRET - MUST change from default! Generate with:
+   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+2. DATABASE_URL (if using PostgreSQL):
+   postgres://username:password@host:port/database
+   
+3. DB_CLIENT - Set to 'postgres' or 'sqlite'
+   For quick local testing: DB_CLIENT=sqlite
+
+ONE-LINER TO START WITH DOCKER:
+-------------------------------
+docker-compose up --build
+
+This will:
+- Start PostgreSQL database
+- Build and start the application
+- Create all required directories
+- Initialize the database
+- Start on http://localhost:5000
+
+WHAT'S INCLUDED IN THIS PACKAGE:
+--------------------------------
+✓ Complete backend with v2.0 data audit features
+✓ JWT authentication (register/login)
+✓ Role-based access control (user/admin)
+✓ Rate limiting and security headers
+✓ Secure file upload with validation
+✓ AI provider abstraction (none/HuggingFace/local)
+✓ PostgreSQL + SQLite support
+✓ Docker configuration
+✓ Heroku/cloud deployment ready
+✓ Unit tests
+✓ CI/CD with GitHub Actions
+✓ Complete documentation
+
+AI PROVIDER OPTIONS (Optional - App works without AI):
+-----------------------------------------------------
+1. NONE (default): AI_PROVIDER=none
+   - App fully functional without AI features
+   
+2. HUGGING FACE (free tier):
+   - AI_PROVIDER=hf
+   - HF_API_KEY=your_key (optional, higher limits if authenticated)
+   - Free tier: https://huggingface.co/inference-api
+   
+3. LOCAL LLM (requires setup):
+   - AI_PROVIDER=local
+   - LOCAL_LLM_URL=http://localhost:8080
+   - Requires llama.cpp server running locally
+
+FIRST RUN SETUP:
+---------------
+1. Copy .env.example to .env
+2. Edit .env and set JWT_SECRET
+3. Run: docker-compose up --build
+4. Register first user: POST http://localhost:5000/api/auth/register
+5. Login and get token
+6. Upload test file with token in Authorization header
+
+SECURITY FEATURES ADDED:
+-----------------------
+✓ JWT authentication on all data endpoints
+✓ Rate limiting (60 req/min general, 5 req/15min auth)
+✓ Helmet security headers
+✓ CORS protection
+✓ File type validation (.csv, .xlsx, .xls, .json only)
+✓ File size limits (50MB default)
+✓ Path traversal prevention
+✓ SQL injection prevention (parameterized queries)
+✓ Password hashing with bcrypt
+✓ Input sanitization
+
+FILES ADDED/MODIFIED:
+--------------------
+NEW FILES:
+- .env.example (all configuration)
+- Dockerfile (container build)
+- docker-compose.yml (orchestration)
+- Procfile (Heroku deployment)
+- server/startup.ts (initialization)
+- server/ai/provider.ts (AI abstraction)
+- server/auth/* (authentication system)
+- server/middleware/security.ts (rate limiting, helmet)
+- server/middleware/upload.ts (secure file upload)
+- .github/workflows/ci.yml (automated testing)
+- tests/* (unit tests)
+- DEPLOY.md (deployment guide)
+- RELEASE_NOTES.md (changelog)
+
+MODIFIED FILES:
+- server/index.ts (added auth, security middleware)
+- server/routes.ts (protected endpoints)
+- server/storage.ts (ownership validation)
+- server/logic_engine.ts (optional AI integration)
+- shared/schema.ts (added users table)
+- package.json (new dependencies)
+
+REMOVED:
+- Replit-specific integrations (optional, not required)
+- Hard-coded Gemini API (replaced with configurable providers)
+
+NEXT STEPS TO DEPLOY TO PRODUCTION:
+-----------------------------------
+1. Get a server (AWS, Digital Ocean, Heroku, etc.)
+2. Install Docker on server
+3. Clone this repository
+4. Copy .env.example to .env
+5. Set production values:
+   - JWT_SECRET (random 64-char string)
+   - DATABASE_URL (production PostgreSQL)
+   - NODE_ENV=production
+6. Run: docker-compose up -d
+7. Set up SSL/TLS (Let's Encrypt recommended)
+8. Configure domain DNS
+9. Set up backups for database and uploads/
+10. Monitor logs and set up alerts (optional: Sentry)
+
+RISK SUMMARY:
+------------
+✓ LOW RISK: Authentication and authorization properly implemented
+✓ LOW RISK: All uploads validated and size-limited
+✓ LOW RISK: Database queries use parameterized statements
+✓ MEDIUM RISK: Ensure JWT_SECRET is strong in production
+✓ MEDIUM RISK: Set up regular database backups
+✓ MEDIUM RISK: Monitor rate limits for DDoS protection
+
+TESTING COMPLETED:
+-----------------
+✓ Unit tests for file parsing
+✓ Unit tests for upload validation
+✓ Integration tests for auth flow
+✓ Docker build verification
+✓ Security headers verification
+✓ Rate limiting verification
+
+For detailed deployment instructions, see DEPLOY.md
+For complete changelog, see RELEASE_NOTES.md
